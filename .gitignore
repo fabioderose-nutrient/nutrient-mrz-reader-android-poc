@@ -1,0 +1,22 @@
+# Gradle and Android build output
+.gradle/
+.kotlin/
+build/
+app/build/
+*.apk
+*.aab
+captures/
+
+# Local configuration (SDK path, optional license key)
+local.properties
+.env
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Audit output pulled from a device (tools/render_audit.py)
+audit/
+# Your own test images (pushed to the device for the on-device benchmark)
+testset/

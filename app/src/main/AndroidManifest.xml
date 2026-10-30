@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Air-gapped by design: the app never declares android.permission.INTERNET.
+         The network-state permission merged from the Nutrient SDK is stripped too. -->
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        tools:node="remove" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
+    <application
+        android:name=".MrzApp"
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MrzPoc">
+
+        <!-- Nutrient is initialised from MrzApp so the license key can come from the settings screen. -->
+        <meta-data
+            android:name="nutrient_automatic_initialize"
+            android:value="false" />
+        <provider
+            android:name="com.pspdfkit.initialization.InitializationProvider"
+            android:authorities="${applicationId}.com.pspdfkit.initialization.InitializationProvider"
+            tools:node="remove" />
+
+        <!-- Nutrient OCR in its own process: a native crash of the OCR engine on one image must not
+             take the app (or a batch run) down with it. -->
+        <service
+            android:name=".ocr.OcrService"
+            android:exported="false"
+            android:process=":ocr" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Custom images: "Share" or "Open with" from Photos, Files, mail… -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Nutrient viewer, to review and edit the redaction annotations before applying them. -->
+        <activity
+            android:name="com.pspdfkit.ui.PdfActivity"
+            android:exported="false"
+            android:theme="@style/PSPDFKit.Theme.Default"
+            android:windowSoftInputMode="adjustNothing" />
+    </application>
+</manifest>
